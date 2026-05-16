@@ -5,10 +5,7 @@ import { prisma } from "@/lib/prisma";
 export default async function SalonLayout({
   children,
   params,
-}: {
-  children: React.ReactNode;
-  params: Promise<{ slug: string }>;
-}) {
+}: any) {
   const { slug } = await params;
   const session = await getSession();
   
