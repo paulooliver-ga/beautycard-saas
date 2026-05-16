@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     }
 
     await createSession(user.id);
-    return NextResponse.json({ ok: true, slug: user.salon.slug });
+    return NextResponse.json({ ok: true });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Erro ao fazer login" }, { status: 500 });

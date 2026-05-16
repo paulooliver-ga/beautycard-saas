@@ -30,7 +30,7 @@ export default function LoginPage() {
       }
 
       toast.success("Bem-vindo!");
-      setTimeout(() => router.push(`/s/${data.slug}/cartao`), 1000);
+      setTimeout(() => router.push(`/dashboard`)
     } catch (err) {
       toast.error("Erro de conexão");
       setLoading(false);
