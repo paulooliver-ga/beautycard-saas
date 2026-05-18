@@ -2,11 +2,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function CadastroPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -41,6 +43,9 @@ export default function CadastroPage() {
     }
   }
 
+  const isPasswordValid = form.password.length >= 8;
+  const isNameValid = form.name.length > 0 && form.name.length <= 40;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
       <div className="bg-slate-800 rounded-lg p-8 w-full max-w-md">
@@ -50,19 +55,29 @@ export default function CadastroPage() {
           {step === 1 ? (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Nome do Salão</label>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="block text-sm font-medium text-gray-300">Nome do Salão</label>
+                  <span className={`text-xs ${form.name.length <= 40 ? "text-gray-400" : "text-red-400"}`}>
+                    {form.name.length}/40
+                  </span>
+                </div>
                 <input
-                  type="text"
-                  placeholder="Seu Salão de Beleza"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-4 py-2 bg-slate-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  required
+                   id="name"
+                   name="name"
+                   type="text"
+                   placeholder="Seu Salão de Beleza"
+                   value={form.name}
+                   onChange={(e) => setForm({ ...form, name: e.target.value.slice(0, 40) })}
+                   className="w-full px-4 py-2 bg-slate-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                   required
                 />
+                {form.name.length > 40 && (
+                  <p className="text-xs text-red-400 mt-1">Máximo 40 caracteres</p>
+                )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Telefone</label>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-300">Nome do Salão</label>
                 <input
                   type="tel"
                   placeholder="61999999999"
@@ -86,7 +101,13 @@ export default function CadastroPage() {
 
               <button
                 type="button"
-                onClick={() => setStep(2)}
+                onClick={() => {
+                  if (!isNameValid) {
+                    toast.error("Nome deve ter até 40 caracteres");
+                    return;
+                  }
+                  setStep(2);
+                }}
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg transition"
               >
                 Próximo
@@ -107,15 +128,35 @@ export default function CadastroPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Senha</label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  className="w-full px-4 py-2 bg-slate-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  required
-                />
+                <div className="flex justify-between items-center mb-1">
+                  <label className="block text-sm font-medium text-gray-300">Senha</label>
+                  <span className={`text-xs ${form.password.length >= 8 ? "text-green-400" : "text-red-400"}`}>
+                    {form.password.length}/8
+                  </span>
+                </div>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={form.password}
+                    onChange={(e) => setForm({ ...form, password: e.target.value.slice(0, 20) })}
+                    className="w-full px-4 py-2 bg-slate-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+                {form.password.length < 8 && form.password.length > 0 && (
+                  <p className="text-xs text-red-400 mt-1">Mínimo 8 caracteres</p>
+                )}
+                {form.password.length >= 8 && (
+                  <p className="text-xs text-green-400 mt-1">✓ Senha válida</p>
+                )}
               </div>
 
               <div className="flex gap-3">
@@ -128,8 +169,8 @@ export default function CadastroPage() {
                 </button>
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg transition disabled:opacity-50"
+                  disabled={loading || !isPasswordValid}
+                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? "Cadastrando..." : "Cadastrar"}
                 </button>
