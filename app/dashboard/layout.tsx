@@ -28,13 +28,17 @@ export default function DashboardLayout({
           </Link>
         </nav>
 
-        <div className="absolute bottom-6">
-          <form action="/api/auth/logout" method="POST">
-            <button className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-red-400 w-full">
-              <LogOut size={20} />
-              <span>Sair</span>
-            </button>
-          </form>
+       <div className="absolute bottom-6 w-full px-3">
+          <button
+            onClick={() => {
+              document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+              window.location.href = "/login";
+            }}
+            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 text-red-400 w-full transition"
+          >
+            <LogOut size={20} />
+            <span>Sair</span>
+          </button>
         </div>
       </aside>
 
