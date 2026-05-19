@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Link from "next/link";
 import { Check } from "lucide-react";
 
 export default function PricingPage() {
@@ -130,15 +131,16 @@ export default function PricingPage() {
                 </span>
               </div>
 
-              <button
-                className={`w-full py-3 rounded-lg font-semibold mb-8 transition ${
-                  plano.destacado
-                    ? "bg-white text-purple-600 hover:bg-gray-100"
-                    : "bg-purple-600 text-white hover:bg-purple-700"
-                }`}
-              >
+            <Link
+              href={`/cadastro?plano=${plano.nome.toLowerCase()}`}
+              className={`block w-full text-center py-3 rounded-lg font-semibold mb-8 transition ${
+              plano.destacado
+              ? "bg-white text-purple-600 hover:bg-gray-100"
+              : "bg-purple-600 text-white hover:bg-purple-700"
+                  }`}
+            >
                 {plano.cta}
-              </button>
+            </Link>
 
               <div className="space-y-3">
                 {plano.features.map((feature, j) => (

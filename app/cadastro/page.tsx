@@ -21,6 +21,12 @@ export default function CadastroPage() {
     e.preventDefault();
     setLoading(true);
 
+    if (!form.name || !form.phone || !form.email || !form.password) {
+      toast.error("Todos os campos são obrigatórios");
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/salons/register", {
         method: "POST",
@@ -43,9 +49,6 @@ export default function CadastroPage() {
     }
   }
 
-  const isPasswordValid = form.password.length >= 8;
-  const isNameValid = form.name.length > 0 && form.name.length <= 40;
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
       <div className="bg-slate-800 rounded-lg p-8 w-full max-w-md">
@@ -56,29 +59,28 @@ export default function CadastroPage() {
             <>
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <label className="block text-sm font-medium text-gray-300">Nome do Salão</label>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-300">Nome do Salão</label>
                   <span className={`text-xs ${form.name.length <= 40 ? "text-gray-400" : "text-red-400"}`}>
                     {form.name.length}/40
                   </span>
                 </div>
                 <input
-                   id="name"
-                   name="name"
-                   type="text"
-                   placeholder="Seu Salão de Beleza"
-                   value={form.name}
-                   onChange={(e) => setForm({ ...form, name: e.target.value.slice(0, 40) })}
-                   className="w-full px-4 py-2 bg-slate-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                   required
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="Seu Salão de Beleza"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value.slice(0, 40) })}
+                  className="w-full px-4 py-2 bg-slate-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  required
                 />
-                {form.name.length > 40 && (
-                  <p className="text-xs text-red-400 mt-1">Máximo 40 caracteres</p>
-                )}
               </div>
 
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-300">Nome do Salão</label>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-1">Telefone</label>
                 <input
+                  id="phone"
+                  name="phone"
                   type="tel"
                   placeholder="61999999999"
                   value={form.phone}
@@ -89,8 +91,10 @@ export default function CadastroPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">WhatsApp (opcional)</label>
+                <label htmlFor="whatsapp" className="block text-sm font-medium text-gray-300 mb-1">WhatsApp (opcional)</label>
                 <input
+                  id="whatsapp"
+                  name="whatsapp"
                   type="tel"
                   placeholder="5561999999999"
                   value={form.whatsapp}
@@ -102,8 +106,8 @@ export default function CadastroPage() {
               <button
                 type="button"
                 onClick={() => {
-                  if (!isNameValid) {
-                    toast.error("Nome deve ter até 40 caracteres");
+                  if (!form.name || !form.phone) {
+                    toast.error("Nome e telefone são obrigatórios");
                     return;
                   }
                   setStep(2);
@@ -116,8 +120,10 @@ export default function CadastroPage() {
           ) : (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">Email</label>
                 <input
+                  id="email"
+                  name="email"
                   type="email"
                   placeholder="seu@email.com"
                   value={form.email}
@@ -129,13 +135,15 @@ export default function CadastroPage() {
 
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <label className="block text-sm font-medium text-gray-300">Senha</label>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-300">Senha</label>
                   <span className={`text-xs ${form.password.length >= 8 ? "text-green-400" : "text-red-400"}`}>
                     {form.password.length}/8
                   </span>
                 </div>
                 <div className="relative">
                   <input
+                    id="password"
+                    name="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={form.password}
@@ -169,7 +177,7 @@ export default function CadastroPage() {
                 </button>
                 <button
                   type="submit"
-                  disabled={loading || !isPasswordValid}
+                  disabled={loading || form.password.length < 8}
                   className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? "Cadastrando..." : "Cadastrar"}
